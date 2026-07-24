@@ -1,0 +1,35 @@
+{
+  "name": "job-agent",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/prefilter.test.ts tests/selection.test.ts tests/letters.test.ts tests/health.test.ts tests/nooauth.test.ts tests/delta.test.ts tests/cost.test.ts tests/multikey.test.ts tests/prompts.test.ts tests/golden.test.ts tests/eval.test.ts tests/validate-letter.test.ts tests/patterns.test.ts tests/golden-isolation.test.ts tests/feedback.test.ts",
+    "pipeline": "tsx scripts/run-pipeline.ts",
+    "veto-sweep": "tsx scripts/veto-sweep.ts",
+    "eval": "tsx scripts/run-eval.ts",
+    "golden:export": "tsx scripts/golden-export.ts",
+    "stats:patterns": "tsx scripts/stats-patterns.ts",
+    "distill:letters": "tsx scripts/distill-letters.ts",
+    "hh-auth": "tsx scripts/hh-auth.ts",
+    "profile-push": "tsx scripts/profile-push.ts",
+    "tg-webhook": "tsx scripts/set-telegram-webhook.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "dotenv": "^16.4.5",
+    "next": "^15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

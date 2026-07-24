@@ -1,0 +1,21 @@
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+.env
+.env.local
+.env.*.local
+
+# личные данные профиля не коммитим, в репо остаются только *.example
+config/profile/resume_*.md
+config/profile/projects.json
+config/profile/notes.md
+
+# отчёты eval/паттернов — локальные артефакты (голден-сет versionируется)
+evals/reports/*
+!evals/reports/.gitkeep
+
+.vercel

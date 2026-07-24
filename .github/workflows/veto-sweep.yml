@@ -1,0 +1,33 @@
+# Авто-отправка veto-очереди по таймауту (раздел 3.6 ТЗ). Выходит за секунды, если очередь пуста.
+name: veto-sweep
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: job-agent-send
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run veto-sweep
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          HH_CLIENT_ID: ${{ secrets.HH_CLIENT_ID }}
+          HH_CLIENT_SECRET: ${{ secrets.HH_CLIENT_SECRET }}
+          HH_USER_AGENT: ${{ secrets.HH_USER_AGENT }}
+          TOKEN_ENCRYPTION_KEY: ${{ secrets.TOKEN_ENCRYPTION_KEY }}

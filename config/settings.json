@@ -1,0 +1,107 @@
+{
+  "timezone": "Europe/Moscow",
+  "profile": {
+    "roles": ["AI-инженер", "LLM-инженер", "Продуктовый аналитик"],
+    "grade": "middle",
+    "skills": ["Python", "TypeScript/Node.js", "LLM, RAG, промпт-инжиниринг", "SQL", "Telegram-боты", "Next.js"],
+    "constraints": ["только удалённая работа", "без релокации"]
+  },
+  "search": {
+    "queries": [
+      "\"AI инженер\" OR \"ИИ инженер\" OR \"AI engineer\" OR \"AI-инженер\" OR \"ИИ-инженер\" OR \"LLM инженер\" OR \"LLM engineer\"",
+      "\"AI-разработчик\" OR \"ИИ-разработчик\" OR \"разработчик AI-агентов\" OR \"AI-интегратор\" OR \"prompt engineer\"",
+      "(\"RAG\" OR \"LLM\") AND (\"разработчик\" OR \"инженер\")",
+      "\"продуктовый аналитик\" AND (\"SQL\" OR \"Python\")",
+      "\"системный аналитик\" AND (\"LLM\" OR \"AI\" OR \"ИИ\" OR \"GigaChat\")"
+    ],
+    "areas": ["113", "40", "16"],
+    "period_days": 3,
+    "only_with_salary": false
+  },
+  "filters": {
+    "salary_min": 0,
+    "currency": "RUR",
+    "formats": ["remote"],
+    "exclude_experience": ["moreThan6"],
+    "stop_words": ["только офис", "работа в офисе обязательна", "без удалёнки", "командировк"],
+    "stop_companies": [],
+    "agency_markers": ["кадровое агентство", "рекрутинговое агентство", "staffing", "hr-агентство"],
+    "max_vacancy_age_days": 14
+  },
+  "scoring": {
+    "threshold": 7,
+    "resume_versions": {
+      "ai_engineer": {
+        "title": "AI-инженер",
+        "hh_resume_id": "",
+        "file": "config/profile/resume_ai_engineer.md"
+      },
+      "analyst": {
+        "title": "Аналитик",
+        "hh_resume_id": "",
+        "file": "config/profile/resume_analyst.md"
+      }
+    }
+  },
+  "sending": {
+    "daily_cap": 10,
+    "mode": "veto",
+    "veto_timeout_minutes": 60,
+    "followup_days": 5
+  },
+  "hh": {
+    "mode": "auto"
+  },
+  "delta_poll": {
+    "enabled": true,
+    "interval_min": 30,
+    "hot_threshold": 8
+  },
+  "letters": {
+    "tone": "уверенный, конкретный, без воды и клише",
+    "language": "auto",
+    "max_chars": 1800,
+    "use_style_examples": false,
+    "style_examples_count": 3,
+    "max_revision_rounds": 3
+  },
+  "llm": {
+    "provider": "gemini",
+    "scorer_model": "gemini-3.5-flash-lite",
+    "scorer_price_in_per_mtok": 0.30,
+    "scorer_price_out_per_mtok": 2.50,
+    "letter_model": "gemini-3.5-flash",
+    "letter_price_in_per_mtok": 1.50,
+    "letter_price_out_per_mtok": 9.00,
+    "min_interval_ms": 6000,
+    "max_scores_per_run": 60,
+    "max_letters_per_run": 15,
+    "daily_cost_alert_usd": 0.1
+  },
+  "prompts": {
+    "dir": "prompts"
+  },
+  "evals": {
+    "golden_path": "evals/golden.json",
+    "reports_dir": "evals/reports",
+    "golden_min_age_days": 3,
+    "min_set_size": 5
+  },
+  "letter_validation": {
+    "banned_phrases": [],
+    "template_junk": []
+  },
+  "analytics": {
+    "stopwords_extra": [],
+    "tech_terms": [
+      "python", "typescript", "javascript", "node.js", "react", "next.js", "sql", "postgresql",
+      "rag", "llm", "langchain", "gemini", "openai", "gpt", "ml", "nlp", "pytorch", "fastapi",
+      "docker", "kubernetes", "aws", "telegram", "supabase", "gigachat", "1c", "битрикс",
+      "go", "java", "c#", "php", "machine learning", "prompt engineering"
+    ],
+    "top_n": 20
+  },
+  "telegram": {
+    "chat_id": ""
+  }
+}
