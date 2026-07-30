@@ -47,3 +47,11 @@ test('несколько нарушений сразу — все в списк�
   const found = rules('Как искусственный интеллект, применяю вайбкодинг: https://example.com/fake');
   assert.deepEqual([...found].sort(), ['banned_phrase', 'fact_check', 'template_junk']);
 });
+
+test('punctuation: em dash is not allowed', () => {
+  assert.deepEqual(rules('Здравствуйте — отвечаю коротко.'), ['punctuation']);
+});
+
+test('punctuation: bullet lists are not allowed', () => {
+  assert.deepEqual(rules('Здравствуйте.\n- Python\n- SQL'), ['punctuation']);
+});

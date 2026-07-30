@@ -10,7 +10,7 @@ import type { AppConfig } from './config';
  * При провале — одна автоматическая регенерация с указанием нарушения,
  * при повторном провале письмо уходит в needs_review (см. letters.ts).
  */
-export type LetterRule = 'length' | 'banned_phrase' | 'fact_check' | 'template_junk';
+export type LetterRule = 'length' | 'banned_phrase' | 'fact_check' | 'template_junk' | 'punctuation';
 
 export interface LetterViolation {
   rule: LetterRule;
@@ -38,6 +38,19 @@ const DEFAULT_TEMPLATE_JUNK = [
   '[вставьте',
   '[ваше имя]',
   '[insert',
+  'буду рад',
+  'буду рада',
+  'готов обсудить',
+  'готова обсудить',
+  'напишите мне',
+  'тестовое задание',
+  'честно о пробелах',
+  'часовой пояс',
+  'utc',
+  'созвон',
+  'would be happy',
+  'looking forward',
+  'happy to discuss',
 ];
 
 const DEFAULT_BANNED = ['вайбкодинг'];
@@ -98,6 +111,14 @@ export function validateLetter(letter: string, opts: ValidateLetterOptions): Let
     if (junk && lower.includes(junk.toLowerCase())) {
       violations.push({ rule: 'template_junk', detail: `шаблонный мусор: «${junk}»` });
     }
+  }
+
+  if (letter.includes('—')) {
+    violations.push({ rule: 'punctuation', detail: 'em dash is not allowed' });
+  }
+
+  if (/^\s*[-*•]\s+/m.test(letter)) {
+    violations.push({ rule: 'punctuation', detail: 'bullet lists are not allowed; use numbered markers like 1) or 1.' });
   }
 
   for (const detail of validateLetterFacts(letter, opts.corpus, opts.vacancyText ?? '')) {

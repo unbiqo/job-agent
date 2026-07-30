@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'JobAgent — очередь откликов',
-  description: 'AI-агент автопоиска работы на hh.ru/hh.kz',
+  title: 'Job inbox',
+  description: 'Minimal vacancy inbox and cover letter workflow',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

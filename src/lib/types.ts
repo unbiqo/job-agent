@@ -45,6 +45,7 @@ export interface LetterRow {
 
 export type ApplicationStatus =
   | 'queued'
+  | 'listed'
   | 'sent'
   | 'vetoed'
   | 'failed'

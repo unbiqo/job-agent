@@ -17,7 +17,7 @@ export class Telegram {
   private async call<T>(method: string, payload: Record<string, unknown>): Promise<T> {
     const res = await fetch(`https://api.telegram.org/bot${this.token}/${method}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify(payload),
     });
     const data = (await res.json()) as { ok: boolean; description?: string; result?: T };
@@ -35,12 +35,10 @@ export class Telegram {
     });
   }
 
-  /** Снять inline-кнопки с карточки после принятого решения. */
   clearButtons(chatId: string | number, messageId: number) {
     return this.call('editMessageReplyMarkup', { chat_id: chatId, message_id: messageId });
   }
 
-  /** Заменить клавиатуру карточки (после решения оставляем только 👍/👎-метки). */
   editButtons(chatId: string | number, messageId: number, keyboard: TgInlineKeyboard) {
     return this.call('editMessageReplyMarkup', { chat_id: chatId, message_id: messageId, reply_markup: keyboard });
   }
@@ -59,7 +57,7 @@ export class Telegram {
 }
 
 export function getTelegram(): Telegram | null {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const token = process.env.TELEGRAM_BOT_TOKEN?.trim();
   return token ? new Telegram(token) : null;
 }
 
@@ -69,7 +67,7 @@ export function formatSalary(s?: SalaryJson | null): string {
   if (!s || (s.from == null && s.to == null)) return 'з/п не указана';
   const cur = CURRENCY[s.currency ?? ''] ?? (s.currency ?? '');
   const k = (n: number) => (n >= 1000 ? `${Math.round(n / 1000)}к` : String(n));
-  if (s.from != null && s.to != null) return `${k(s.from)}–${k(s.to)} ${cur}`;
+  if (s.from != null && s.to != null) return `${k(s.from)}-${k(s.to)} ${cur}`;
   if (s.from != null) return `от ${k(s.from)} ${cur}`;
   return `до ${k(s.to as number)} ${cur}`;
 }
@@ -88,7 +86,6 @@ function scheduleLabel(v: VacancyRow): string {
   return raw?.schedule?.name ?? '';
 }
 
-/** Карточка вакансии (раздел 3.7 ТЗ) — общая для Telegram и веба. */
 export function formatCard(
   v: VacancyRow,
   ev: Pick<EvaluationRow, 'score' | 'reasons' | 'red_flags'> | null,
@@ -96,26 +93,22 @@ export function formatCard(
   resumeTitle: string,
 ): string {
   const score = ev?.score ?? 0;
-  const fire = score >= 8 ? '🔥' : score >= 7 ? '✨' : '📋';
+  const marker = score >= 8 ? '🔥' : score >= 7 ? '✨' : '📋';
   const reasons = (ev?.reasons ?? []).join('; ');
   const flags = (ev?.red_flags ?? []).join('; ');
   const parts = [
-    `${fire} ${score}/10 · ${v.title} @ ${v.employer ?? '—'}`,
+    `${marker} ${score}/10 · ${v.title} @ ${v.employer ?? '-'}`,
     [formatSalary(v.salary), scheduleLabel(v), publishedLabel(v.published_at)].filter(Boolean).join(' · '),
     reasons ? `Почему подходит: ${reasons}` : '',
     flags ? `Риски: ${flags}` : '',
     `Резюме: ${resumeTitle}`,
     `https://hh.ru/vacancy/${v.id}`,
-    '———',
+    '---',
     letterText ? truncate(letterText, 2500) : '(письма нет)',
   ];
   return parts.filter(Boolean).join('\n');
 }
 
-/**
- * Ряд меток релевантности (задача 2 слоя качества) — на каждой показанной
- * вакансии. Нажатие пишет метку в таблицу labels; из меток растёт голден-сет.
- */
 export function labelRow(vacancyId: string): TgButton[] {
   return [
     { text: '👍 релевантно', callback_data: `like:${vacancyId}` },
@@ -123,15 +116,10 @@ export function labelRow(vacancyId: string): TgButton[] {
   ];
 }
 
-/** Клавиатура только из меток — остаётся на карточке после решения по отклику. */
 export function labelKeyboard(vacancyId: string): TgInlineKeyboard {
   return { inline_keyboard: [labelRow(vacancyId)] };
 }
 
-/**
- * Клавиатура карточки ПОСЛЕ отправки отклика: метки 👍/👎 + «⭐ В эталоны»
- * (задача 9: финальное одобренное письмо можно добавить в пул примеров стиля).
- */
 export function postSendKeyboard(vacancyId: string): TgInlineKeyboard {
   return {
     inline_keyboard: [labelRow(vacancyId), [{ text: '⭐ В эталоны', callback_data: `star:${vacancyId}` }]],
@@ -151,10 +139,6 @@ export function vetoKeyboard(vacancyId: string): TgInlineKeyboard {
   };
 }
 
-/**
- * Карточка режима NO_OAUTH/FALLBACK (спека 3.6): агент не может POST /negotiations,
- * поэтому предлагает откликнуться руками. «✅ Я откликнулся» → sent+manual.
- */
 export function manualKeyboard(vacancyId: string): TgInlineKeyboard {
   return {
     inline_keyboard: [
@@ -171,7 +155,6 @@ export function manualKeyboard(vacancyId: string): TgInlineKeyboard {
   };
 }
 
-/** 3-дневный опрос статуса ручного отклика (спека 3.7), когда синк по OAuth недоступен. */
 export function statusPollKeyboard(vacancyId: string): TgInlineKeyboard {
   return {
     inline_keyboard: [

@@ -43,9 +43,9 @@ interface GeminiKey {
 /** GEMINI_API_KEY/2 — бесплатные (free tier, $0), пробуются первыми; GEMINI_API_KEY3 — платный фолбэк. */
 function geminiApiKeys(): GeminiKey[] {
   return [
-    { key: process.env.GEMINI_API_KEY, billed: false },
-    { key: process.env.GEMINI_API_KEY2, billed: false },
-    { key: process.env.GEMINI_API_KEY3, billed: true },
+    { key: process.env.GEMINI_API_KEY?.trim(), billed: false },
+    { key: process.env.GEMINI_API_KEY2?.trim(), billed: false },
+    { key: process.env.GEMINI_API_KEY3?.trim(), billed: true },
   ].filter((k): k is GeminiKey => !!k.key);
 }
 
